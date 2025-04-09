@@ -1,89 +1,82 @@
 ToggleVM
-ToggleVM is an interactive PowerShell script that lets you manage your Hyper-V virtual machine and its Parsec connection. It lets you start, stop, restart or force-kill your VM, launch or toggle Parsec, and manage VM checkpoints with live search and overwrite functionality. ToggleVM works best with the Easy-GPU-PV setup available at https://github.com/jamesstringerparsec/Easy-GPU-PV.
 
-Features
-VM Management:
+A simple, fully offline, powershell script to control Hyper-V GPU-PV VMs and Parsec connections easily.
 
-Start, shut down (gracefully or forcefully), restart or kill your Hyper‑V VM.
+Best used together with Enhanced-GPU-PV: https://github.com/timminator/Enhanced-GPU-PV
 
-Parsec Control:
+-------------------------------------------------------------------------------
 
-Launch or toggle Parsec connectivity with configurable automatic closing behavior.
+Features:
 
-Checkpoint Management:
+- Start, shutdown, restart, or force-kill a Hyper-V VM
+- Connect to VM via Parsec automatically using a peer ID
+- Control Parsec behavior: always close, never close, or prompt on shutdown
+- Manage VM checkpoints: create, delete, rename, apply, overwrite
+- Live search through checkpoints
+- Factory reset the VM to a checkpoint
+- Safety confirmation system for dangerous actions
+- Config file system that saves settings automatically
+- Works fully from a simple interactive menu
+- Supports direct powershell flags if you don't want to use the menu
 
-Create, apply, and overwrite checkpoints.
+-------------------------------------------------------------------------------
 
-Live in‑menu search for checkpoints.
+Requirements:
 
-Settings:
+- Windows with Hyper-V installed
+- PowerShell 5.1 or later
+- Parsec installed
+- Administrative privileges (must run powershell as administrator)
 
-Configure Parsec close policy (always close, never close, or prompt).
+-------------------------------------------------------------------------------
 
-Toggle safety confirmations for destructive actions.
+First Time Setup:
 
-Interactive Menu:
+- When running for the first time, the script will generate a config file
+- You will be prompted to input your Parsec peer ID if missing
+- After that, everything is automatic
 
-Use arrow keys, hotkeys (n, o, s, b, etc.), and live search to quickly find and manage checkpoints.
+-------------------------------------------------------------------------------
 
-Prerequisites
-Windows with Hyper-V enabled.
+Temporary Hyper-V Connection:
 
-Parsec installed.
+- There is an option to create a temporary Hyper-V connection that auto-closes after 25 seconds
+- This forces the VM to properly register the external GPU display
+- If you only connect with Parsec, sometimes it connects to the wrong display (Hyper-V's internal display)
+- This would bypass the GPU completely and ruin performance
+- The temporary connection ensures Parsec sees the external GPU display
 
-PowerShell 5.1 (or later) installed.
+Important tip: I recommend setting up a scheduled task inside the VM that switches to the external display on boot. This is what I do to make sure everything is always on the right display automatically.
 
-Best used within the Easy-GPU-PV environment:
-https://github.com/jamesstringerparsec/Easy-GPU-PV
+-------------------------------------------------------------------------------
 
-Installation
-Clone or download this repository.
+Command Line Flags:
 
-Place the ToggleVM.ps1 script in your desired folder.
+- -StartVM : start the VM and connect via Parsec
+- -ShutdownVM : gracefully shutdown the VM
+- -KillVM : force kill the VM immediately
+- -ConnectParsec : connect to the VM via Parsec
+- -OpenMenu : forces the interactive menu to open
 
-Open a PowerShell prompt with administrative privileges.
+-------------------------------------------------------------------------------
 
-Run the script. On the first run it will generate a configuration file (GPUPV.config) and prompt for your Parsec peer ID if missing.
+Settings You Can Change:
 
-Usage
-When you run the script, you’ll see an interactive menu with options to control the VM, manage Parsec, and handle checkpoints. You can use the following keys within the menu:
+- Set new Parsec peer ID
+- Set Parsec close behavior (alwaysClose, neverClose, prompt)
+- Toggle safety confirmation (on/off)
+- Manage VM checkpoints (create, delete, rename, overwrite, factory reset)
 
-1, 2, etc.: Execute the corresponding main menu actions.
+-------------------------------------------------------------------------------
 
-Arrow keys: Navigate through the menu.
+Notes:
 
-n: Create a new checkpoint.
+- If Parsec is missing, wrong peer ID, or VM name wrong, you can change it easily inside the config file
+- The script creates and uses "GPUPV.config" and "GPUPV.log" automatically
+- Factory reset option only works if you created a checkpoint called "factory reset"
 
-o: Overwrite the selected checkpoint (except for the “Factory Reset” checkpoint).
+-------------------------------------------------------------------------------
 
-s: Toggle live search mode. When active, type to filter checkpoints instantly.
+Important:
 
-b: Return to the main menu.
-
-Enter: Open the actions menu for the selected checkpoint.
-
-You can also run the script with command-line switches (e.g. -StartVM, -ShutdownVM, etc.) to automate tasks without entering the menu.
-
-Configuration
-The script uses a configuration file named GPUPV.config that stores essential values such as:
-
-VM name
-
-Parsec executable path
-
-Parsec close policy (alwaysClose, neverClose, or prompt)
-
-Safety confirmation flag
-
-Parsec peer ID (if not found, you will be prompted to enter it)
-
-Feel free to modify these values or use the in-menu settings to update them.
-
-Contributing
-Contributions, feedback, and feature suggestions are welcome. Feel free to open issues or submit pull requests.
-
-License
-This project is released under [insert your license here].
-
-Support
-For support or questions, please open an issue on this repository.
+Always run the script as administrator or Hyper-V commands and Parsec operations might fail.
